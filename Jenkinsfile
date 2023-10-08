@@ -1,30 +1,44 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.0'
-            args '-v /root/.m2:/root/.m2'
+node {
+    def dockerImage
+
+    try {
+        // Stage 1: Checkout Source Code
+        stage('Checkout') {
+            checkout scm
         }
-    }
-    stages {
+
+        // Stage 2: Build
         stage('Build') {
-            steps {
+            dockerImage = docker.image('maven:3.9.0').run("-v /root/.m2:/root/.m2")
+            dockerImage.inside {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
+
+        // Stage 3: Test
         stage('Test') {
-            steps {
+            dockerImage.inside {
                 sh 'mvn test'
             }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
+        }
+
+        // Stage 4: Post-Test Actions
+        stage('Post-Test') {
+            dockerImage.inside {
+                junit 'target/surefire-reports/*.xml'
             }
         }
+
+        // Stage 5: Deliver
         stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
-            }
+            sh './jenkins/scripts/deliver.sh'
+        }
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+        throw e
+    } finally {
+        if (dockerImage != null) {
+            dockerImage.stop()
         }
     }
 }
