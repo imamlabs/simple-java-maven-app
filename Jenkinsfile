@@ -14,11 +14,11 @@ node {
         junit 'target/surefire-reports/*.xml'
     }
     stage('Manual Approval') {
-            steps {
-                // Menunggu persetujuan manual
-                input message: 'Lanjutkan ke tahap Deploy?'
-            }
+        steps {
+            // Menunggu persetujuan manual
+            input message: 'Lanjutkan ke tahap Deploy?'
         }
+    }
 
     stage('Deploy') {
         docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
