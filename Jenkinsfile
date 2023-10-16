@@ -15,12 +15,10 @@ node {
     }
     stage('Manual Approval') {
     steps {
-        script {
-            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
-                input message: 'Lanjutkan ke tahap Deploy?'
-            }
-        }
-    }
+            script {
+            i   nput message: 'Lanjutkan ke tahap Deploy?'
+             }
+         }
     }
 
     stage('Deploy') {
