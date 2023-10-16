@@ -13,14 +13,16 @@ node {
         }
         junit 'target/surefire-reports/*.xml'
     }
-    stage('Manual Approval'){
-        docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
-            steps{
+    stage('Manual Approval') {
+    steps {
+        script {
+            docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
                 input message: 'Lanjutkan ke tahap Deploy?'
             }
         }
-        
     }
+    }
+
     stage('Deploy') {
         docker.image(mavenImage).inside('-v /root/.m2:/root/.m2') {
             sh './jenkins/scripts/deliver.sh'
