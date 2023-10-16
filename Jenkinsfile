@@ -41,7 +41,8 @@ pipeline {
                         sh 'sleep 1m'
                         //sehubung tdk menemukan file untuk menghentikan proses App pada master saya buat sendiri lngsung d jenkinfile
                         def jarName = "my-app-1.0-SNAPSHOT.jar"
-                        sh "pgrep -f 'java -jar $jarName' > .pidfile" //idtfikasi PID java
+                        sh pgrep -f "java -jar my-app-1.0-SNAPSHOT.jar > .pidfile"
+                       // sh "pgrep -f 'java -jar $jarName' > .pidfile" //idtfikasi PID java
                         def pidFile = readFile('.pidfile').trim() // Mmbaca PID dari berkas .pidfile
                         if (pidFile) {
                             sh "kill $pidFile" // Menghentikan proses Java berdasarkan PID jika PID ditemukan
