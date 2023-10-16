@@ -16,7 +16,7 @@ node {
     stage('Manual Approval') {
     steps {
             script {
-            i   nput message: 'Lanjutkan ke tahap Deploy?'
+            input message: 'Lanjutkan ke tahap Deploy?'
              }
          }
     }
